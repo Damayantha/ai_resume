@@ -1,24 +1,26 @@
 {
-  "name": " ",
-  "version": "0.0.1",
-  "description": "",
-  "private": true,
-  "keywords": [
-    ""
-  ],
-  "license": "",
-  "author": "",
+  "name": "ai-resume-maker",
+  "version": "1.0.0",
+  "description": "An AI-powered resume maker using the Gemini API.",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open --config webpack.config.dev.js",
-    "build": "webpack --config webpack.config.prod.js"
+    "start": "live-server"
+  },
+  "keywords": [
+    "ai",
+    "resume",
+    "gemini",
+    "html",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.14.1",
+    "firebase": "^11.9.1",
+    "html2pdf.js": "^0.10.1"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^11.0.0",
-    "html-webpack-plugin": "^5.6.0",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4",
-    "webpack-merge": "^5.10.0"
+    "live-server": "^1.2.2"
   }
 }

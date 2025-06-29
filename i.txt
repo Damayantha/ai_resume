@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Resume Maker - Professional Resume Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a'
+            },
+            accent: {
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857'
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-morphism {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .input-focus {
+      transition: all 0.3s ease;
+    }
+
+    .input-focus:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .floating-element {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .typing-indicator::after {
+      content: '|';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+<!-- Background Elements -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+  <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 floating-element"></div>
+  <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 floating-element" style="animation-delay: -3s;"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 floating-element" style="animation-delay: -1.5s;"></div>
+</div>
+
+<div class="relative z-10 min-h-screen">
+  <!-- Header -->
+  <header class="text-center py-12 px-4">
+    <div class="animate-fade-in">
+      <h1 class="text-5xl md:text-7xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        AI Resume Maker
+      </h1>
+      <p class="text-xl text-gray-300 mb-6 max-w-2xl mx-auto">
+        Craft professional, ATS-optimized resumes with the power of Gemini AI
+      </p>
+      <div class="flex justify-center items-center space-x-2 text-green-400">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <span class="text-sm">AI-Powered • Real-time Chat • PDF Export</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 pb-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+      <!-- Input Section -->
+      <div class="space-y-6">
+        <div class="glass-morphism rounded-2xl p-8 card-hover animate-slide-up">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white flex items-center">
+              <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg mr-3 flex items-center justify-center">
+                <span class="text-white font-bold">1</span>
+              </div>
+              Enter Your Details
+            </h2>
+            <button id="demo-data-btn" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 text-sm font-medium">
+              Load Demo Data
+            </button>
+          </div>
+
+          <form id="resume-form" class="space-y-6">
+            <!-- Personal Information -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Personal Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="fullName" placeholder="Full Name" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus" required>
+                <input type="email" id="email" placeholder="Email Address" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus" required>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="tel" id="phone" placeholder="Phone Number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus">
+                <input type="url" id="linkedin" placeholder="LinkedIn Profile URL" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus">
+              </div>
+            </div>
+
+            <!-- Professional Summary -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Professional Summary</h3>
+              <textarea id="summary" placeholder="Briefly describe your career goals and key qualifications, or let the AI write it for you..." class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus h-24 resize-none"></textarea>
+            </div>
+
+            <!-- Work Experience -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Work Experience</h3>
+                <button type="button" id="add-experience-btn" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors duration-300">
+                  + Add Experience
+                </button>
+              </div>
+              <div id="experience-fields" class="space-y-4">
+                <!-- Experience blocks will be added here -->
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Skills</h3>
+              <input type="text" id="skills" placeholder="e.g., JavaScript, Project Management, Python, Public Speaking" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus">
+            </div>
+
+            <!-- Target Job -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-semibold text-white border-b border-gray-600 pb-2">Target Job (Optional)</h3>
+              <textarea id="job-description" placeholder="Paste the job description here to tailor your resume for ATS optimization..." class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus h-32 resize-none"></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" id="generate-btn" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                <span id="generate-btn-text" class="flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    Generate Resume
+                                </span>
+              <div id="loading-spinner" class="hidden flex items-center justify-center">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
+                Generating with AI...
+              </div>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Output Section -->
+      <div class="space-y-6">
+        <div class="glass-morphism rounded-2xl p-8 card-hover animate-slide-up" style="animation-delay: 0.1s;">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white flex items-center">
+              <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-3 flex items-center justify-center">
+                <span class="text-white font-bold">2</span>
+              </div>
+              Review & Download
+            </h2>
+            <button id="download-pdf-btn" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+
+          <div id="resume-output-container" class="bg-white rounded-lg p-6 min-h-[500px] shadow-inner overflow-y-auto max-h-[600px]">
+            <div id="resume-output" class="prose max-w-none">
+              <div class="text-center text-gray-400 mt-24">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="text-lg">Your AI-generated resume will appear here...</p>
+                <p class="text-sm mt-2">Fill out the form and click "Generate Resume" to get started</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div id="chat-interface" class="glass-morphism rounded-2xl p-8 card-hover animate-slide-up hidden" style="animation-delay: 0.2s;">
+          <h2 class="text-2xl font-bold text-white flex items-center mb-6">
+            <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg mr-3 flex items-center justify-center">
+              <span class="text-white font-bold">3</span>
+            </div>
+            Chat with AI to Refine
+          </h2>
+
+          <p class="text-gray-300 text-sm mb-4">Ask the AI to make changes like "Make the tone more formal" or "Add a certifications section"</p>
+
+          <div id="chat-history" class="bg-white/5 rounded-lg p-4 h-40 overflow-y-auto mb-4 border border-white/10">
+            <!-- Chat messages will appear here -->
+          </div>
+
+          <form id="chat-form" class="flex gap-3">
+            <input type="text" id="chat-input" placeholder="Type your request..." class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus" required>
+            <button type="submit" id="chat-send-btn" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105">
+              <span id="chat-send-text">Send</span>
+              <div id="chat-loading" class="hidden">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              </div>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Toast Notifications -->
+<div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
+
+<script type="module">
+  import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.21.0";
+
+  // Configuration
+  const API_KEY = "AIzaSyCOazVWmFYlCyeed1S1H-PrFDIFrNml_hY";
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  // DOM Elements
+  const resumeForm = document.getElementById('resume-form');
+  const generateBtn = document.getElementById('generate-btn');
+  const generateBtnText = document.getElementById('generate-btn-text');
+  const loadingSpinner = document.getElementById('loading-spinner');
+  const resumeOutput = document.getElementById('resume-output');
+  const downloadPdfBtn = document.getElementById('download-pdf-btn');
+  const demoDataBtn = document.getElementById('demo-data-btn');
+  const addExperienceBtn = document.getElementById('add-experience-btn');
+  const experienceFields = document.getElementById('experience-fields');
+  const chatInterface = document.getElementById('chat-interface');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatHistory = document.getElementById('chat-history');
+  const chatSendBtn = document.getElementById('chat-send-btn');
+  const chatSendText = document.getElementById('chat-send-text');
+  const chatLoading = document.getElementById('chat-loading');
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    addExperienceBlock();
+  });
+
+  // Event Listeners
+  resumeForm.addEventListener('submit', handleGenerateResume);
+  demoDataBtn.addEventListener('click', populateWithDemoData);
+  addExperienceBtn.addEventListener('click', () => addExperienceBlock());
+  downloadPdfBtn.addEventListener('click', downloadAsPDF);
+  chatForm.addEventListener('submit', handleChatRequest);
+
+  // Toast Notification System
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+
+    toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+    toast.textContent = message;
+
+    document.getElementById('toast-container').appendChild(toast);
+
+    setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+    setTimeout(() => {
+      toast.classList.add('translate-x-full');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  // Main Resume Generation Function
+  async function handleGenerateResume(e) {
+    e.preventDefault();
+    setLoadingState(true);
+
+    try {
+      const formData = getFormData();
+      const prompt = createInitialPrompt(formData);
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      resumeOutput.innerHTML = cleanHtml(text);
+
+      downloadPdfBtn.disabled = false;
+      chatInterface.classList.remove('hidden');
+      chatHistory.innerHTML = '';
+      addMessageToChat('AI', 'Your resume is ready! How can I help you refine it?');
+
+      showToast('Resume generated successfully!', 'success');
+    } catch (error) {
+      console.error("Error generating resume:", error);
+      resumeOutput.innerHTML = `<div class="text-center text-red-500 p-8">
+                    <p class="text-lg font-semibold">An error occurred while generating your resume.</p>
+                    <p class="text-sm mt-2">Please check your internet connection and try again.</p>
+                </div>`;
+      showToast('Failed to generate resume. Please try again.', 'error');
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  // Chat Request Handler
+  async function handleChatRequest(e) {
+    e.preventDefault();
+    const userRequest = chatInput.value.trim();
+    if (!userRequest) return;
+
+    setChatLoadingState(true);
+    addMessageToChat('You', userRequest);
+    chatInput.value = '';
+
+    try {
+      const currentResumeHtml = resumeOutput.innerHTML;
+      const prompt = createChatPrompt(currentResumeHtml, userRequest);
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const newHtml = response.text();
+
+      resumeOutput.innerHTML = cleanHtml(newHtml);
+      addMessageToChat('AI', 'I have updated your resume based on your request.');
+      showToast('Resume updated successfully!', 'success');
+    } catch (error) {
+      console.error("Error in chat:", error);
+      addMessageToChat('AI', 'Sorry, I encountered an error. Please try again.');
+      showToast('Failed to update resume. Please try again.', 'error');
+    } finally {
+      setChatLoadingState(false);
+    }
+  }
+
+  // Get Form Data
+  function getFormData() {
+    const experienceBlocks = document.querySelectorAll('.experience-block');
+    const experiences = Array.from(experienceBlocks).map(block => ({
+      jobTitle: block.querySelector('[name="jobTitle"]').value,
+      company: block.querySelector('[name="company"]').value,
+      location: block.querySelector('[name="location"]').value,
+      dates: block.querySelector('[name="dates"]').value,
+      description: block.querySelector('[name="description"]').value
+    })).filter(exp => exp.jobTitle && exp.company);
+
+    return {
+      fullName: document.getElementById('fullName').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      linkedin: document.getElementById('linkedin').value,
+      summary: document.getElementById('summary').value,
+      skills: document.getElementById('skills').value,
+      jobDescription: document.getElementById('job-description').value,
+      experiences: experiences
+    };
+  }
+
+  // Create Initial Prompt
+  function createInitialPrompt(data) {
+    const experienceString = data.experiences.map(exp =>
+      `- Job Title: ${exp.jobTitle}\n  Company: ${exp.company}\n  Location: ${exp.location}\n  Dates: ${exp.dates}\n  Responsibilities: ${exp.description}`
+    ).join('\n\n');
+
+    return `
+                Act as an expert resume writer and web developer specializing in clean, professional HTML resumes.
+                Based on the following user data, generate a complete, ATS-optimized resume in HTML format.
+
+                **CRITICAL INSTRUCTIONS:**
+                1. **Output Format:** Return ONLY clean HTML code without markdown formatting, code blocks, or wrapper tags.
+                2. **Styling:** Use modern, professional styling with inline CSS. Create a clean, single-column layout.
+                3. **Content Requirements:**
+                   - Write a compelling professional summary (2-3 sentences) if not provided
+                   - Transform job responsibilities into 3-5 action-oriented bullet points per role
+                   - Optimize content for ATS systems with relevant keywords
+                   - If target job description is provided, tailor content to match requirements
+                   - Structure content hierarchically with clear sections
+
+                **USER DATA:**
+                - Full Name: ${data.fullName}
+                - Contact: Email: ${data.email}, Phone: ${data.phone}, LinkedIn: ${data.linkedin}
+                - Professional Summary: ${data.summary || 'Please generate based on experience'}
+                - Skills: ${data.skills}
+                - Work Experience:
+                ${experienceString}
+                - Target Job Description (for tailoring):
+                ${data.jobDescription || 'None provided'}
+
+                Generate a professional, ATS-friendly resume that highlights achievements and uses industry keywords.
+            `;
+  }
+
+  // Create Chat Prompt
+  function createChatPrompt(currentHtml, request) {
+    return `
+                You are an AI assistant that modifies HTML resume content based on user requests.
+
+                **Current Resume HTML:**
+                ${currentHtml}
+
+                **User Request:** "${request}"
+
+                **Instructions:**
+                1. Apply the requested changes to the HTML resume
+                2. Maintain professional formatting and ATS optimization
+                3. Return only the complete, updated HTML code
+                4. Do not include markdown formatting or code blocks
+                5. Ensure all changes enhance the resume's effectiveness
+
+                Please provide the updated HTML resume code.
+            `;
+  }
+
+  // Demo Data Population
+  function populateWithDemoData() {
+    // Clear existing experience fields
+    experienceFields.innerHTML = '';
+
+    // Populate form fields
+    document.getElementById('fullName').value = 'Sarah Johnson';
+    document.getElementById('email').value = 'sarah.johnson@email.com';
+    document.getElementById('phone').value = '+1 (555) 123-4567';
+    document.getElementById('linkedin').value = 'https://linkedin.com/in/sarahjohnson';
+    document.getElementById('summary').value = 'Results-driven Senior Software Engineer with 6+ years of experience in full-stack development. Proven track record of leading cross-functional teams and delivering scalable web applications that serve millions of users.';
+    document.getElementById('skills').value = 'React, TypeScript, Node.js, Python, AWS, Docker, Kubernetes, GraphQL, PostgreSQL, Redis, Git, Agile/Scrum, Team Leadership';
+    document.getElementById('job-description').value = 'We are seeking a Senior Full Stack Developer with expertise in React and Node.js to join our growing engineering team. The ideal candidate will have 5+ years of experience building scalable web applications, knowledge of cloud platforms (AWS preferred), and experience with modern DevOps practices. Leadership experience and strong communication skills are highly valued.';
+
+    // Add experience blocks
+    addExperienceBlock('Senior Software Engineer', 'TechFlow Solutions', 'San Francisco, CA', 'March 2021 - Present', 'Led development of customer-facing dashboard serving 100K+ users using React and TypeScript. Architected microservices backend with Node.js and GraphQL, reducing API response times by 40%. Mentored team of 4 junior developers and established code review best practices. Implemented CI/CD pipelines using Docker and AWS, improving deployment frequency by 300%.');
+
+    addExperienceBlock('Full Stack Developer', 'InnovateLab Inc.', 'Austin, TX', 'June 2019 - February 2021', 'Developed and maintained 5+ web applications using React, Node.js, and PostgreSQL. Collaborated with UX/UI designers to implement responsive designs, improving mobile user engagement by 25%. Optimized database queries and implemented caching strategies, reducing page load times by 50%. Participated in Agile development process and sprint planning sessions.');
+
+    addExperienceBlock('Software Developer', 'StartupXYZ', 'Remote', 'August 2018 - May 2019', 'Built RESTful APIs and integrated third-party services for e-commerce platform. Implemented automated testing suite, achieving 90% code coverage. Contributed to open-source projects and participated in code reviews. Worked closely with product team to translate business requirements into technical solutions.');
+
+    showToast('Demo data loaded successfully!', 'success');
+  }
+
+  // Add Experience Block
+  function addExperienceBlock(title = '', company = '', location = '', dates = '', desc = '') {
+    const blockId = `exp-${Date.now()}`;
+    const newBlock = document.createElement('div');
+    newBlock.className = 'experience-block bg-white/5 border border-white/10 rounded-lg p-4 space-y-3';
+    newBlock.id = blockId;
+    newBlock.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <h4 class="font-medium text-white">Experience Entry</h4>
+                    <button type="button" onclick="document.getElementById('${blockId}').remove(); showToast('Experience removed', 'info');" class="text-red-400 hover:text-red-300 text-sm transition-colors">
+                        Remove
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" name="jobTitle" placeholder="Job Title" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${title}">
+                    <input type="text" name="company" placeholder="Company" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${company}">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" name="location" placeholder="Location" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${location}">
+                    <input type="text" name="dates" placeholder="Employment Dates" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${dates}">
+                </div>
+                <textarea name="description" placeholder="Key responsibilities and achievements..." class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus h-20 resize-none text-sm">${desc}</textarea>
+            `;
+    experienceFields.appendChild(newBlock);
+  }
+
+  // Download as PDF
+  function downloadAsPDF() {
+    const element = document.getElementById('resume-output');
+    const fullName = document.getElementById('fullName').value || 'resume';
+    const filename = `${fullName.replace(/\s+/g, '_')}_resume.pdf`;
+
+    const opt = {
+      margin: 0.5,
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    showToast('Generating PDF...', 'info');
+    html2pdf().set(opt).from(element).save().then(() => {
+      showToast('PDF downloaded successfully!', 'success');
+    }).catch(() => {
+      showToast('Failed to generate PDF', 'error');
+    });
+  }
+
+  // Add Message to Chat
+  function addMessageToChat(sender, message) {
+    const messageElement = document.createElement('div');
+    const isUser = sender === 'You';
+
+    messageElement.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`;
+    messageElement.innerHTML = `
+                <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${isUser ? 'bg-blue-500 text-white' : 'bg-white/10 text-gray-200'} text-sm">
+                    <div class="font-semibold text-xs mb-1 ${isUser ? 'text-blue-100' : 'text-gray-400'}">${sender}</div>
+                    <div>${message}</div>
+                </div>
+            `;
+
+    chatHistory.appendChild(messageElement);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+  }
+
+  // Set Loading States
+  function setLoadingState(isLoading) {
+    generateBtn.disabled = isLoading;
+    if (isLoading) {
+      generateBtnText.classList.add('hidden');
+      loadingSpinner.classList.remove('hidden');
+    } else {
+      generateBtnText.classList.remove('hidden');
+      loadingSpinner.classList.add('hidden');
+    }
+  }
+
+  function setChatLoadingState(isLoading) {
+    chatSendBtn.disabled = isLoading;
+    chatInput.disabled = isLoading;
+    if (isLoading) {
+      chatSendText.classList.add('hidden');
+      chatLoading.classList.remove('hidden');
+    } else {
+      chatSendText.classList.remove('hidden');
+      chatLoading.classList.add('hidden');
+    }
+  }
+
+  // Clean HTML Response
+  function cleanHtml(html) {
+    return html.replace(/```html/g, '').replace(/```/g, '').trim();
+  }
+
+  // Add some interactive animations
+  document.querySelectorAll('input, textarea').forEach(input => {
+    input.addEventListener('focus', function() {
+      this.parentElement.classList.add('scale-105');
+    });
+
+    input.addEventListener('blur', function() {
+      this.parentElement.classList.remove('scale-105');
+    });
+  });
+
+  // Smooth scroll for better UX
+  function smoothScrollTo(element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Auto-save functionality (optional)
+  let autoSaveTimeout;
+  function setupAutoSave() {
+    const formInputs = document.querySelectorAll('#resume-form input, #resume-form textarea');
+    formInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+          const formData = getFormData();
+          localStorage.setItem('resumeFormData', JSON.stringify(formData));
+        }, 1000);
+      });
+    });
+  }
+
+  // Load saved data on page load
+  function loadSavedData() {
+    const savedData = localStorage.getItem('resumeFormData');
+    if (savedData) {
+      try {
+        const data = JSON.parse(savedData);
+        // Populate form with saved data
+        Object.keys(data).forEach(key => {
+          const element = document.getElementById(key);
+          if (element && data[key]) {
+            element.value = data[key];
+          }
+        });
+      } catch (e) {
+        console.log('No saved data to load');
+      }
+    }
+  }
+
+  // Initialize auto-save
+  setupAutoSave();
+  loadSavedData();
+
+  // Enhanced error handling
+  window.addEventListener('error', (e) => {
+    console.error('Application error:', e);
+    showToast('An unexpected error occurred', 'error');
+  });
+
+  // Show loading state for better UX
+  window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+  });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// AI Resume Maker - Main Application
+// This application uses the Google Gemini API to generate professional resumes
+
+class ResumeApp {
+  constructor() {
+    // IMPORTANT: In a real-world application, this API key should be handled on a secure backend server,
+    // not exposed in the frontend client-side code. This is for demonstration purposes only.
+    this.apiKey = 'AIzaSyCOazVWmFYlCyeed1S1H-PrFDIFrNml_hY';
+    this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+
+    this.currentResume = '';
+    this.selectedTheme = '#3b82f6';
+    this.experienceCount = 0;
+    this.educationCount = 0;
+
+    this.init();
+  }
+
+  init() {
+    this.bindEvents();
+    this.addInitialFields();
+  }
+
+  bindEvents() {
+    document.getElementById('resume-form').addEventListener('submit', (e) => { e.preventDefault(); this.generateResume(); });
+    document.getElementById('demo-data-btn').addEventListener('click', () => { this.loadDemoData(); });
+    document.getElementById('add-experience-btn').addEventListener('click', () => { this.addExperienceField(); });
+    document.getElementById('add-education-btn').addEventListener('click', () => { this.addEducationField(); });
+    document.getElementById('download-pdf-btn').addEventListener('click', () => { this.downloadPDF(); });
+    document.getElementById('chat-form').addEventListener('submit', (e) => { e.preventDefault(); this.sendChatMessage(); });
+    document.getElementById('theme-selector').addEventListener('click', (e) => { if (e.target.classList.contains('color-swatch')) this.selectTheme(e.target); });
+    document.getElementById('resume-upload').addEventListener('change', (e) => { this.handleResumeUpload(e); });
+  }
+
+  addInitialFields() {
+    this.addExperienceField();
+    this.addEducationField();
+  }
+
+  addExperienceField(data = {}) {
+    const container = document.getElementById('experience-fields');
+    const id = this.experienceCount++;
+    const experienceDiv = document.createElement('div');
+    experienceDiv.className = 'space-y-3 p-4 bg-white/5 rounded-lg border border-white/10';
+    experienceDiv.innerHTML = `
+      <div class="flex justify-between items-center">
+          <h4 class="text-white font-medium">Experience ${id + 1}</h4>
+          ${id > 0 ? `<button type="button" class="text-red-400 hover:text-red-300 remove-experience"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input type="text" name="jobTitle[]" placeholder="Job Title" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.jobTitle || ''}">
+          <input type="text" name="company[]" placeholder="Company Name" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.company || ''}">
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input type="text" name="workLocation[]" placeholder="Location" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.location || ''}">
+          <input type="text" name="workDuration[]" placeholder="e.g., Jan 2020 - Present" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.duration || ''}">
+      </div>
+      <div class="relative">
+          <textarea name="jobDescription[]" placeholder="Job description and key achievements..." class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus h-20 resize-none text-sm pr-10">${data.description || ''}</textarea>
+          <button type="button" class="enhance-btn" title="Enhance with AI">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 4.293a1 1 0 011.414 1.414l-9 9a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L10 12.586l7.293-7.293a1 1 0 011.414 0z" /></svg>
+          </button>
+      </div>
+    `;
+    container.appendChild(experienceDiv);
+
+    // Add event listeners programmatically
+    const removeBtn = experienceDiv.querySelector('.remove-experience');
+    if(removeBtn) removeBtn.addEventListener('click', () => experienceDiv.remove());
+
+    const enhanceBtn = experienceDiv.querySelector('.enhance-btn');
+    const descriptionTextarea = experienceDiv.querySelector('textarea');
+    enhanceBtn.addEventListener('click', () => this.enhanceDescription(descriptionTextarea, enhanceBtn));
+  }
+
+  addEducationField(data = {}) {
+    const container = document.getElementById('education-fields');
+    const id = this.educationCount++;
+    const educationDiv = document.createElement('div');
+    educationDiv.className = 'space-y-3 p-4 bg-white/5 rounded-lg border border-white/10';
+    educationDiv.innerHTML = `
+      <div class="flex justify-between items-center">
+          <h4 class="text-white font-medium">Education ${id + 1}</h4>
+          ${id > 0 ? `<button type="button" class="text-red-400 hover:text-red-300 remove-education"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input type="text" name="degree[]" placeholder="Degree/Certification" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.degree || ''}">
+          <input type="text" name="institution[]" placeholder="Institution Name" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.institution || ''}">
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input type="text" name="eduLocation[]" placeholder="Location" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.location || ''}">
+          <input type="text" name="eduDuration[]" placeholder="e.g., 2018 - 2022" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.duration || ''}">
+      </div>
+      <input type="text" name="gpa[]" placeholder="GPA or Details (Optional)" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 input-focus text-sm" value="${data.gpa || ''}">
+    `;
+    container.appendChild(educationDiv);
+
+    const removeBtn = educationDiv.querySelector('.remove-education');
+    if(removeBtn) removeBtn.addEventListener('click', () => educationDiv.remove());
+  }
+
+  loadDemoData() {
+    this.resetForm();
+    document.getElementById('fullName').value = 'Sarah Johnson';
+    document.getElementById('email').value = 'sarah.johnson@email.com';
+    document.getElementById('phone').value = '+1 (555) 123-4567';
+    document.getElementById('linkedin').value = 'https://linkedin.com/in/sarahjohnson';
+    document.getElementById('location').value = 'San Francisco, CA';
+    document.getElementById('summary').value = 'Results-driven Full Stack Developer with 5+ years of experience building scalable web applications. Expertise in React, Node.js, and cloud technologies. Proven track record of leading cross-functional teams and delivering high-quality solutions that improve user experience and drive business growth.';
+    document.getElementById('skills').value = 'JavaScript, React, Node.js, Python, SQL, MongoDB, AWS, Docker, Git, Agile Development, Team Leadership, Problem Solving';
+
+    this.addExperienceField({ jobTitle: 'Senior Full Stack Developer', company: 'TechCorp Solutions', location: 'San Francisco, CA', duration: 'Jan 2021 - Present', description: '- Led development of customer-facing web applications serving 100K+ users.\n- Architected microservices infrastructure resulting in 40% performance improvement.\n- Mentored junior developers and established coding standards.' });
+    this.addExperienceField({ jobTitle: 'Full Stack Developer', company: 'Digital Innovations Inc', location: 'San Francisco, CA', duration: 'Jun 2019 - Dec 2020', description: '- Developed and maintained e-commerce platform handling $2M+ in annual transactions.\n- Implemented automated testing reducing bugs by 60%.' });
+    this.addEducationField({ degree: 'Bachelor of Science in Computer Science', institution: 'University of California, Berkeley', location: 'Berkeley, CA', duration: '2015 - 2019', gpa: 'GPA: 3.8/4.0, Dean\'s List' });
+    document.getElementById('job-description').value = 'We are seeking a Senior Full Stack Developer to join our growing team. The ideal candidate will have experience with modern web technologies including React, Node.js, and cloud platforms. You will be responsible for designing and implementing scalable web applications, mentoring junior developers, and collaborating with cross-functional teams to deliver high-quality solutions.';
+    this.showToast('Demo data loaded successfully!', 'success');
+  }
+
+  async generateResume() {
+    const formData = this.collectFormData();
+    if (!this.validateFormData(formData)) {
+      this.showToast('Please fill in Full Name, Email, and at least one experience or education entry.', 'error');
+      return;
+    }
+    this.setLoading(true);
+    try {
+      const prompt = this.createResumePrompt(formData);
+      const aiResponse = await this.callGeminiAPI(prompt);
+      this.currentResume = aiResponse;
+      this.displayResume(aiResponse);
+      this.enableDownload();
+      this.showChatInterface();
+      this.showToast('Resume generated successfully!', 'success');
+    } catch (error) {
+      console.error('Error generating resume:', error);
+      this.displayResume(`<div class="text-red-500 text-center p-4">Sorry, there was an error generating the resume. Please check the console for details.</div>`);
+      this.showToast('Failed to generate resume. Please try again.', 'error');
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  collectFormData() {
+    const getValues = (name) => Array.from(document.getElementsByName(name)).map(el => el.value);
+    const formData = {
+      personalInfo: { fullName: document.getElementById('fullName').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value, linkedin: document.getElementById('linkedin').value, location: document.getElementById('location').value },
+      summary: document.getElementById('summary').value,
+      skills: document.getElementById('skills').value,
+      jobDescription: document.getElementById('job-description').value,
+      experience: [], education: []
+    };
+
+    const jobTitles = getValues('jobTitle[]');
+    for (let i = 0; i < jobTitles.length; i++) {
+      if (jobTitles[i] || getValues('company[]')[i]) {
+        formData.experience.push({ jobTitle: jobTitles[i], company: getValues('company[]')[i], location: getValues('workLocation[]')[i], duration: getValues('workDuration[]')[i], description: getValues('jobDescription[]')[i] });
+      }
+    }
+    const degrees = getValues('degree[]');
+    for (let i = 0; i < degrees.length; i++) {
+      if (degrees[i] || getValues('institution[]')[i]) {
+        formData.education.push({ degree: degrees[i], institution: getValues('institution[]')[i], location: getValues('eduLocation[]')[i], duration: getValues('eduDuration[]')[i], gpa: getValues('gpa[]')[i] });
+      }
+    }
+    return formData;
+  }
+
+  validateFormData(formData) { return formData.personalInfo.fullName && formData.personalInfo.email && (formData.experience.length > 0 || formData.education.length > 0); }
+
+  createResumePrompt(formData) {
+    const targetJobSection = formData.jobDescription ? `\n\nTarget Job Description:\n${formData.jobDescription}\n\nPlease optimize the resume for ATS (Applicant Tracking System) by incorporating relevant keywords from the job description naturally throughout the resume content.` : '';
+    const themeInstruction = `The user has selected a theme color: ${this.selectedTheme}. The CSS in the parent page uses a variable \`--resume-accent-color\` which is already set for elements like h2 borders and links. You must use the provided HTML structure and CSS classes to ensure proper styling.`;
+
+    return `Create a professional, ATS-optimized resume in clean HTML format with modern styling, proper alignment, and visual hierarchy.
+
+Candidate Data:
+- Personal Info: ${JSON.stringify(formData.personalInfo)}
+- Professional Summary: ${formData.summary || 'Please create a compelling professional summary based on the experience and skills provided.'}
+- Work Experience: ${JSON.stringify(formData.experience)}
+- Education: ${JSON.stringify(formData.education)}
+- Skills: ${formData.skills}
+${targetJobSection}
+
+Formatting & Styling Requirements:
+${themeInstruction}
+
+**HTML Structure & CSS Classes:**
+
+1. **Document Container**: Wrap everything in \`<div class="resume-container">\`
+
+2. **Header Section**:
+   - Use \`<header class="resume-header">\`
+   - **Name**: \`<h1 class="candidate-name">\`
+   - **Contact Info**: \`<div class="contact-info">\`
+     - Use \`<div class="contact-row">\` for each row of contact details
+     - Individual contact items: \`<span class="contact-item">\`
+     - Icons: Use \`<i class="contact-icon" data-icon="email|phone|linkedin|location"></i>\`
+     - Format: \`<i class="contact-icon" data-icon="email"></i> email@example.com\`
+     - LinkedIn should be clickable: \`<a href="linkedin-url" class="contact-link">\`
+
+3. **Main Content**: \`<main class="resume-main">\`
+
+4. **Section Structure**:
+   - Each section: \`<section class="resume-section">\`
+   - **Section Headers**: \`<h2 class="section-title">\`
+   - **Section Content**: \`<div class="section-content">\`
+
+5. **Professional Summary**:
+   - \`<section class="resume-section summary-section">\`
+   - Content in \`<p class="summary-text">\`
+
+6. **Experience Section**:
+   - Each job: \`<div class="experience-entry">\`
+   - **Entry Header**: \`<div class="entry-header">\`
+     - Job title: \`<h3 class="entry-title">\`
+     - Company: \`<div class="entry-company">\`
+     - Date range: \`<div class="entry-date">\`
+     - Location: \`<div class="entry-location">\`
+   - **Achievements**: \`<ul class="achievement-list">\`
+     - Each point: \`<li class="achievement-item">\`
+
+7. **Education Section**:
+   - Each degree: \`<div class="education-entry">\`
+   - Structure similar to experience but use \`education-\` prefixed classes
+
+8. **Skills Section**:
+   - \`<section class="resume-section skills-section">\`
+   - Skills container: \`<div class="skills-container">\`
+   - Skill categories (if applicable): \`<div class="skill-category">\`
+     - Category title: \`<h4 class="skill-category-title">\`
+     - Skills list: \`<div class="skills-list">\`
+     - Individual skills: \`<span class="skill-item">\`
+
+**Typography & Spacing Guidelines:**
+- Use proper heading hierarchy (h1 > h2 > h3 > h4)
+- Maintain consistent spacing between sections
+- Use semantic HTML tags for better accessibility
+- Ensure proper line height for readability
+
+**Content Quality Standards:**
+- Start bullet points with strong action verbs
+- Quantify achievements with specific numbers/percentages where possible
+- Use industry-relevant keywords naturally
+- Keep descriptions concise but impactful
+- Tailor content to highlight relevant experience for the target role
+
+**Accessibility & ATS Optimization:**
+- Use semantic HTML structure
+- Include proper heading hierarchy
+- Ensure text contrast meets accessibility standards
+- Use standard fonts and avoid complex layouts
+- Include alt text for any icons (using data attributes)
+- Structure content logically for screen readers
+
+**Visual Enhancement:**
+- Use consistent spacing and alignment
+- Implement visual hierarchy through font sizes and weights
+- Add subtle visual separators between sections
+- Ensure responsive design considerations
+- Use the accent color strategically for highlights
+
+**Icon Usage:**
+- Email: data-icon="email"
+- Phone: data-icon="phone"
+- LinkedIn: data-icon="linkedin"
+- Location: data-icon="location"
+- Website: data-icon="website"
+- GitHub: data-icon="github"
+
+**Important Notes:**
+- Return ONLY the raw HTML content
+- No markdown formatting, backticks, or explanations
+- Use the exact CSS classes specified above
+- Ensure all content is wrapped in appropriate semantic tags
+- Maintain professional tone throughout
+- Follow ATS-friendly formatting practices
+
+The final output should be clean, professional HTML that renders beautifully with proper alignment, spacing, and visual hierarchy while remaining fully ATS-compatible.`};
+
+  async callGeminiAPI(prompt, temperature = 0.7, maxOutputTokens = 8192) {
+    const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature, topK: 40, topP: 0.95, maxOutputTokens }
+      })
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status} ${await response.text()}`);
+    const data = await response.json();
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) throw new Error('Invalid response from AI service');
+    const text = data.candidates[0].content.parts[0].text;
+    return text.replace(/```html\n?|\n?```/g, '').replace(/```\n?|\n?```/g, '').trim();
+  }
+
+  displayResume(htmlContent) { document.getElementById('resume-output').innerHTML = htmlContent; }
+
+  async sendChatMessage() {
+    const chatInput = document.getElementById('chat-input');
+    const message = chatInput.value.trim();
+    if (!message) return;
+    if (!this.currentResume) { this.showToast('Please generate a resume first', 'error'); return; }
+
+    this.setChatLoading(true);
+    this.addChatMessage(message, 'user');
+    chatInput.value = '';
+
+    try {
+      const prompt = `Here is the current resume in HTML format:\n${this.currentResume}\n\nUser request: "${message}"\nPlease modify the resume HTML according to the user's request. Maintain the same professional formatting, structure, and CSS classes as the original. Return ONLY the updated HTML content.`;
+      const aiResponse = await this.callGeminiAPI(prompt, 0.5);
+      this.currentResume = aiResponse;
+      this.displayResume(aiResponse);
+      this.addChatMessage('Resume updated successfully!', 'ai');
+    } catch (error) {
+      console.error('Error in chat:', error);
+      this.addChatMessage('Sorry, I encountered an error. Please try again.', 'ai');
+    } finally {
+      this.setChatLoading(false);
+    }
+  }
+
+  addChatMessage(message, sender) {
+    const chatHistory = document.getElementById('chat-history');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `mb-3 ${sender === 'user' ? 'text-right' : 'text-left'}`;
+    messageDiv.innerHTML = `<div class="inline-block px-4 py-2 rounded-lg max-w-xs ${sender === 'user' ? 'bg-blue-500 text-white' : 'bg-white/10 text-gray-200 border border-white/20'}"><div class="text-xs opacity-75 mb-1">${sender === 'user' ? 'You' : 'AI Assistant'}</div><div class="text-sm">${message}</div></div>`;
+    chatHistory.appendChild(messageDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+  }
+
+  async enhanceDescription(textarea, button) {
+    const originalText = textarea.value;
+    if (!originalText) { this.showToast('Please enter a description to enhance.', 'error'); return; }
+
+    const originalIcon = button.innerHTML;
+    button.innerHTML = `<div class="w-4 h-4 border-2 border-white/50 border-t-white rounded-full spinner"></div>`;
+    button.disabled = true;
+
+    const prompt = `Rewrite and enhance the following job responsibility to be more impactful for a resume. Use strong action verbs and quantify achievements where possible. Format the output as bullet points, each starting with a hyphen '-'. Keep it concise and professional.
+    Original text: "${originalText}"
+    Return ONLY the enhanced text.`;
+
+    try {
+      const enhancedText = await this.callGeminiAPI(prompt, 0.6, 1024);
+      textarea.value = enhancedText.trim();
+      this.showToast('Description enhanced by AI!', 'success');
+    } catch (error) {
+      console.error('Enhancement failed:', error);
+      this.showToast('AI enhancement failed. Please try again.', 'error');
+    } finally {
+      button.innerHTML = originalIcon;
+      button.disabled = false;
+    }
+  }
+
+  async handleResumeUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const uploadStatus = document.getElementById('upload-status');
+    const uploadLabel = document.getElementById('upload-label');
+    uploadStatus.textContent = 'Reading file...';
+
+    if (file.type !== 'text/plain') {
+      this.showToast('For this demo, please upload a .txt file.', 'info');
+      uploadStatus.textContent = 'Demo only supports .txt';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const textContent = e.target.result;
+      uploadStatus.textContent = 'Extracting data with AI...';
+      try {
+        const prompt = `Analyze the following resume text and extract the key information into a structured JSON object. The JSON object should have these keys: "fullName", "email", "phone", "linkedin", "location", "summary", "skills" (as a comma-separated string), "experience" (an array of objects with keys: "jobTitle", "company", "location", "duration", "description"), and "education" (an array of objects with keys: "degree", "institution", "location", "duration", "gpa").
+        Resume Text:\n---\n${textContent}\n---\nReturn ONLY the raw JSON object.`;
+        let extractedData = await this.callGeminiAPI(prompt, 0.1, 4096);
+        const parsedData = JSON.parse(extractedData);
+        this.populateForm(parsedData);
+        uploadStatus.textContent = 'Data extracted successfully!';
+        this.showToast('Resume data has been populated!', 'success');
+      } catch (error) {
+        console.error('Data extraction failed:', error);
+        uploadStatus.textContent = 'AI extraction failed.';
+        this.showToast('Could not extract data from the resume.', 'error');
+      } finally {
+        uploadLabel.textContent = 'Select File (.txt)';
+        event.target.value = ''; // Reset file input
+      }
+    };
+    uploadLabel.textContent = file.name;
+    reader.readAsText(file);
+  }
+
+  populateForm(data) {
+    this.resetForm();
+    document.getElementById('fullName').value = data.fullName || '';
+    document.getElementById('email').value = data.email || '';
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('linkedin').value = data.linkedin || '';
+    document.getElementById('location').value = data.location || '';
+    document.getElementById('summary').value = data.summary || '';
+    document.getElementById('skills').value = data.skills || '';
+    if (data.experience && Array.isArray(data.experience)) data.experience.forEach(exp => this.addExperienceField(exp));
+    if (data.education && Array.isArray(data.education)) data.education.forEach(edu => this.addEducationField(edu));
+  }
+
+  resetForm() {
+    document.getElementById('resume-form').reset();
+    document.getElementById('experience-fields').innerHTML = '';
+    document.getElementById('education-fields').innerHTML = '';
+    this.experienceCount = 0;
+    this.educationCount = 0;
+    this.addInitialFields();
+  }
+
+  selectTheme(swatchElement) {
+    document.querySelectorAll('#theme-selector .color-swatch').forEach(el => el.classList.remove('active'));
+    swatchElement.classList.add('active');
+    this.selectedTheme = swatchElement.dataset.color;
+    document.documentElement.style.setProperty('--resume-accent-color', this.selectedTheme);
+  }
+
+  downloadPDF() {
+    const resumeElement = document.getElementById('resume-output');
+    if (!resumeElement.innerHTML.trim() || resumeElement.querySelector('.text-gray-400')) { this.showToast('No resume to download', 'error'); return; }
+    const opt = { margin: [0.5, 0.5, 0.5, 0.5], filename: `${document.getElementById('fullName').value || 'resume'}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+    html2pdf().set(opt).from(resumeElement).save().then(() => { this.showToast('Resume downloaded successfully!', 'success'); }).catch(e => { console.error(e); this.showToast('Failed to download PDF', 'error'); });
+  }
+
+  setLoading(isLoading) {
+    const btn = document.getElementById('generate-btn'), text = document.getElementById('generate-btn-text'), spinner = document.getElementById('loading-spinner');
+    btn.disabled = isLoading;
+    text.classList.toggle('hidden', isLoading);
+    spinner.classList.toggle('hidden', !isLoading);
+  }
+
+  setChatLoading(isLoading) {
+    const btn = document.getElementById('chat-send-btn'), text = document.getElementById('chat-send-text'), loading = document.getElementById('chat-loading');
+    btn.disabled = isLoading;
+    text.classList.toggle('hidden', isLoading);
+    loading.classList.toggle('hidden', !isLoading);
+  }
+
+  enableDownload() { document.getElementById('download-pdf-btn').disabled = false; }
+  showChatInterface() { document.getElementById('chat-interface').classList.remove('hidden'); }
+
+  showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `px-6 py-4 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 translate-x-full opacity-0 ${ type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500' }`;
+    toast.textContent = message;
+    const container = document.getElementById('toast-container');
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 100);
+    setTimeout(() => {
+      toast.classList.add('translate-x-full', 'opacity-0');
+      setTimeout(() => container.contains(toast) && container.removeChild(toast), 300);
+    }, 3000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => new ResumeApp());
+
+
