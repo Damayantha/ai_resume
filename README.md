@@ -46,11 +46,10 @@
 
 ## 🧰 Tech Stack
 
-- **Frontend:** Next.js, Tailwind CSS, Firebase Hosting
-- **AI Integration:** Gemini API
-- **PDF Conversion:** HTML-to-PDF via custom backend (Python/Node)
+- **Frontend:** HTML5, Tailwind CSS, JavasScript
+- **AI Integration:** Gemini API - flash 2.5 model 
+- **PDF Conversion:** HTML-to-PDF via custom backend (Python)
 - **Backend:** Google Cloud Run
-- **Design System:** TailwindCSS
 
 ---
 
