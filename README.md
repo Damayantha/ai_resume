@@ -1,4 +1,4 @@
-# 💼 AI Resume Maker Platform
+# 💼 PDFolio-AI Resume Maker Platform
 
 [Live Website 🌐](https://ai-resume-maker-6060f.web.app) • [API Endpoint 🔗](https://resume-pdf-generator-551210772147.us-central1.run.app/docs)
 
@@ -11,7 +11,7 @@
 > 🧪 This project is developed as a **prototype** for  
 > `MN 4011 – Business Plan Development`  
 > **Group Assignment (In'20/S8)**  
-> 💼 **Planned business launch: June 2025**
+
 
 ---
 
