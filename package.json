@@ -1,26 +1,17 @@
 {
-  "name": "ai-resume-maker",
+  "name": "ai-resume-playwright",
   "version": "1.0.0",
-  "description": "An AI-powered resume maker using the Gemini API.",
-  "main": "index.html",
+  "description": "AI Resume Builder with Playwright for PDF Generation",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "live-server"
+    "start": "node server.js",
+    "install-browsers": "npx playwright install"
   },
-  "keywords": [
-    "ai",
-    "resume",
-    "gemini",
-    "html",
-    "javascript"
-  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.14.1",
-    "firebase": "^11.9.1",
-    "html2pdf.js": "^0.10.1"
-  },
-  "devDependencies": {
-    "live-server": "^1.2.2"
+    "express": "^4.19.2",
+    "playwright": "^1.44.1"
   }
 }
