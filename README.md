@@ -57,14 +57,14 @@
 ## 📂 Project Structure (Prototype Version)
 
 ```
-├── frontend/               # User-facing interface (React / Next.js)
-│   ├── components/         # UI components and resume templates
-│   ├── pages/              # Application routing and logic
-│   └── public/             # Static assets and metadata
-├── backend/                # API for HTML to PDF generation
-│   └── main.py             # Flask/FastAPI backend handler
-├── README.md               # Project documentation
-└── .firebaserc             # Firebase configuration
+├── public/              
+│   ├── index.html       
+│   ├── css/style.css              
+│   └── js/app.js           
+├── api/                # API for HTML to PDF generation
+│   └── main.py            
+├── README.md              
+
 ```
 
 ---
